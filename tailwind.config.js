@@ -1,236 +1,219 @@
-/** @type {import('tailwindcss').Config} */
+/** @type {import('tailwindcjs').Config} */
 export default {
   content: [
     "./index.html",
     "./src/**/*.{js,ts,jsx,tsx}",
   ],
   theme: {
-    extend: {},
+    extend: {
+      borderRadius: {
+        DEFAULT: '0rem',
+        'lg': '1rem',
+        'xl': '1.5rem',
+      },
+      spacing: {
+        DEFAULT: '1rem',
+        'xs': '0.5rem',
+        'sm': '0.75rem',
+        'md': '1.25rem',
+        'lg': '1.5rem',
+        'xl': '2rem',
+        '2xl': '3rem',
+      },
+      fontFamily: {
+        sans: [
+          "ui-sans-serif",
+          "system-ui",
+          "-apple-system",
+          "Segoe UI",
+          "Roboto",
+          "Helvetica Neue",
+          "Arial",
+          "Noto Sans",
+          "sans-serif",
+          "Apple Color Emoji",
+          "Segoe UI Emoji",
+          "Segoe UI Symbol",
+          "Noto Color Emoji",
+        ],
+        mono: [
+          "SF Mono",
+          "ui-monospace",
+          "SFMono-Regular",
+          "Menlo",
+          "Monaco",
+          "Consolas",
+          "Liberation Mono",
+          "Courier New",
+          "monospace"
+        ],
+      },
+      backgroundImage: {
+        'card-light': 'linear-gradient(135deg, var(--base-100), var(--base-200))',
+        'card-dark': 'linear-gradient(135deg, var(--base-200), var(--base-300))',
+        'nav-light': 'linear-gradient(90deg, var(--base-100), var(--base-200))',
+        'nav-dark': 'linear-gradient(90deg, var(--base-100), var(--base-200))',
+        'button-light': 'linear-gradient(135deg, var(--primary), var(--secondary))',
+        'button-dark': 'linear-gradient(135deg, var(--neutral), var(--base-300))',
+      },
+    },
   },
   plugins: [require("daisyui")],
   daisyui: {
+    styled: true,
+    base: true,
+    utils: true,
+    logs: true,
+    rtl: false,
+    prefix: "",
+    darkTheme: "night",
     themes: [
       {
-        cyberpunk: {
-          "primary": "#ff7598",
-          "secondary": "#75d1f0",
-          "accent": "#c07eec",
-          "neutral": "#291334",
-          "base-100": "#1d1021",
-          "base-200": "#2a1929",
-          "base-300": "#3a2a3a",
-          "info": "#66c6ff",
-          "success": "#87d039",
-          "warning": "#e2d562",
-          "error": "#ff1640",
+        day: {
+          // Base colors
+          primary: "#111",
+          "primary-focus": "#000000",
+          "primary-content": "#ffffff",
 
-          "*": {
-            "font-family": "'Rajdhani', sans-serif",
-            "border-color": "#6B1C67",
-          },
+          secondary: "#00C2E0",
+          "secondary-focus": "#00a5c0",
+          "secondary-content": "#ffffff",
+
+          accent: "#FFCA28",
+          "accent-focus": "#ffb300",
+          "accent-content": "#000000",
+
+          neutral: "#303841",
+          "neutral-focus": "#1a1e23",
+          "neutral-content": "#ffffff",
+
+          info: "#00B8D4",
+          "info-content": "#ffffff",
+
+          success: "#18DB93",
+          "success-content": "#ffffff",
+
+          warning: "#FFB024",
+          "warning-content": "#000000",
+
+          error: "#ED4A31",
+          "error-content": "#ffffff",
+
+          "base-100": "#FFFFFF",
+          "base-200": "#F7FAFC",
+          "base-300": "#EDF2F7",
+          "base-content": "#1f2937",
+
+          // Component styles
           ".btn": {
-            "border-width": "2px",
-            "border-color": "currentColor",
-            "text-transform": "uppercase",
-            "font-weight": "700",
+            "font-weight": "600",
+            "transition": "all 0.3s ease",
             "&:hover": {
               "transform": "translateY(-2px)",
-              "box-shadow": "0 10px 20px -10px var(--primary)",
-            }
+              "box-shadow": "0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)",
+            },
           },
           ".card": {
-            "background": "linear-gradient(45deg, var(--base-200), var(--base-300))",
-            "border": "2px solid",
-            "border-color": "var(--primary)",
+            "box-shadow": "0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)",
+            "background": "var(--bg-card-light)",
+          },
+          ".input": {
+            "transition": "border-color 0.2s ease-in-out",
+            "&:focus": {
+              "border-color": "var(--primary)",
+              "box-shadow": "0 0 0 2px rgba(var(--primary), 0.1)",
+            },
           },
           ".navbar": {
-            "background": "linear-gradient(180deg, var(--base-100), var(--base-200))",
-            "border-bottom": "2px solid var(--primary)",
+            "background": "var(--bg-nav-light)",
+            "box-shadow": "0 2px 4px -1px rgba(0, 0, 0, 0.06), 0 4px 6px -1px rgba(0, 0, 0, 0.1)",
           },
-          ".wallet-btn": {
-            "border": "2px solid var(--primary)",
-            "background": "linear-gradient(45deg, var(--base-200), var(--base-300))",
-            "text-transform": "uppercase",
-            "position": "relative",
-            "overflow": "hidden",
-            "&:hover": {
-              "transform": "scale(1.02)",
-              "box-shadow": "0 0 15px var(--primary)",
-              "&::before": {
-                "content": "''",
-                "position": "absolute",
-                "top": "-50%",
-                "left": "-50%",
-                "width": "200%",
-                "height": "200%",
-                "background": "linear-gradient(45deg, transparent, rgba(255,255,255,0.1), transparent)",
-                "transform": "rotate(45deg)",
-                "animation": "cyber-glint 2s infinite",
-              }
-            }
-          }
+
+          "--rounded-box": "0rem",
+          "--rounded-btn": "0.15rem",
+          "--rounded-badge": "0rem",
+          "--animation-btn": "0.3s",
+          "--animation-input": "0.2s",
+          "--btn-text-case": "uppercase",
+          "--btn-focus-scale": "0.95",
+          "--border-btn": "1px",
+          "--tab-border": "1px",
+          "--tab-radius": "0rem",
         },
 
-        minimal: {
-          "primary": "#000000",
-          "secondary": "#333333",
-          "accent": "#666666",
-          "neutral": "#000000",
-          "base-100": "#FFFFFF",
-          "base-200": "#FAFAFA",
-          "base-300": "#F5F5F5",
-          "info": "#000000",
-          "success": "#000000",
-          "warning": "#000000",
-          "error": "#000000",
+        night: {
+          primary: "#A3A3A3",
+          "primary-focus": "#8A8A8A",
+          "primary-content": "#000000",
 
-          // Minimal style overrides
-          "*": {
-            "font-family": "'Space Grotesk', sans-serif",
-          },
+          secondary: "#B8B8B8",
+          "secondary-focus": "#9F9F9F",
+          "secondary-content": "#000000",
+
+          accent: "#D4D4D4",
+          "accent-focus": "#BBBBBB",
+          "accent-content": "#000000",
+
+          neutral: "#4B4B4B",
+          "neutral-focus": "#323232",
+          "neutral-content": "#ffffff",
+
+          info: "#8C8C8C",
+          "info-content": "#ffffff",
+
+          success: "#18DB93",
+          "success-content": "#111",
+
+          warning: "#787878",
+          "warning-content": "#ffffff",
+
+          error: "#ED4A31",
+          "error-content": "#ffffff",
+
+          "base-100": "#1C1C1B",
+          "base-200": "#1C1C1C",
+          "base-300": "#2E2E2E",
+          "base-content": "#ffffff",
+
+          // Component styles
           ".btn": {
-            "border-radius": "0",
-            "text-transform": "none",
-            "font-weight": "400",
-            "border": "1px solid #000000",
-            "background": "none",
-            "transition": "all 0.2s ease",
-            "&:hover": {
-              "background": "#000000",
-              "color": "#FFFFFF",
-            }
-          },
-          ".card": {
-            "border-radius": "0",
-            "border": "1px solid #000000",
-            "box-shadow": "none",
-          },
-          ".navbar": {
-            "border-bottom": "1px solid #000000",
-          },
-          ".modal": {
-            "border-radius": "0",
-            "border": "1px solid #000000",
-          }
-        },
-
-        playful: {
-          "primary": "#FF6B6B",
-          "secondary": "#4ECDC4",
-          "accent": "#FFE66D",
-          "neutral": "#2C2C2C",
-          "base-100": "#FFFFFF",
-          "base-200": "#FFF5F5",
-          "base-300": "#FFEDED",
-          "info": "#45B7D1",
-          "success": "#47D185",
-          "warning": "#FFB84C",
-          "error": "#FF6B6B",
-
-          "*": {
-            "font-family": "'Quicksand', sans-serif",
-          },
-          ".btn": {
-            "border-radius": "999px",
-            "font-weight": "700",
-            "padding": "0.5rem 1.5rem",
+            "font-weight": "500",
+            "transition": "all 0.3s ease",
             "&:hover": {
               "transform": "translateY(-2px)",
-              "box-shadow": "0 10px 20px -10px var(--primary)",
-            }
+              "box-shadow": "0 10px 15px -3px rgba(0, 0, 0, 0.2)",
+            },
           },
           ".card": {
-            "border-radius": "2rem",
-            "box-shadow": "0 20px 25px -5px rgba(0, 0, 0, 0.1)",
-            "border": "none",
-          },
-          // Fixed modal positioning
-          ".modal": {
-            "position": "fixed",
-            "top": "50%",
-            "left": "50%",
-            "transform": "translate(-50%, -50%)",
-            "border-radius": "2rem",
-            "max-width": "90vw",
-            "max-height": "90vh",
-            "overflow-y": "auto",
-            "background": "var(--base-100)",
+            "background": "var(--bg-card-dark)",
+            "border": "1px solid rgba(255,255,255,0.1)",
             "box-shadow": "0 25px 50px -12px rgba(0, 0, 0, 0.25)",
-          }
-        },
-
-        brutalist: {
-          "primary": "#0000FF",
-          "secondary": "#FF0000",
-          "accent": "#00FF00",
-          "neutral": "#000000",
-          "base-100": "#FFFFFF",
-          "base-200": "#FFFFFF",
-          "base-300": "#CCCCCC",
-          "info": "#0000FF",
-          "success": "#00FF00",
-          "warning": "#FF0000",
-          "error": "#FF0000",
-
-          // Brutalist style overrides
-          "*": {
-            "font-family": "'IBM Plex Mono', monospace",
           },
-          "html": {
-            "cursor": "crosshair",
-          },
-          ".btn": {
-            "border-radius": "0",
-            "border": "3px solid black",
-            "text-transform": "uppercase",
-            "background": "#FFFFFF",
-            "color": "#000000",
-            "box-shadow": "5px 5px 0px black",
-            "transition": "all 0.1s ease",
-            "&:hover": {
-              "transform": "translate(-2px, -2px)",
-              "box-shadow": "7px 7px 0px black",
+          ".input": {
+            "background": "var(--base-200)",
+            "border": "1px solid rgba(255,255,255,0.1)",
+            "&:focus": {
+              "border-color": "var(--primary)",
+              "box-shadow": "0 0 0 2px rgba(255, 255, 255, 0.1)",
             },
-            "&:active": {
-              "transform": "translate(2px, 2px)",
-              "box-shadow": "3px 3px 0px black",
-            }
-          },
-          ".card": {
-            "border": "3px solid black",
-            "border-radius": "0",
-            "box-shadow": "8px 8px 0px black",
-            "transform": "rotate(-1deg)",
           },
           ".navbar": {
-            "border-bottom": "3px solid black",
-            "background": "repeating-linear-gradient(45deg, #fff, #fff 10px, #000 10px, #000 11px)",
+            "background": "var(--bg-nav-dark)",
+            "border-bottom": "1px solid rgba(255,255,255,0.1)",
           },
-          ".modal": {
-            "border": "3px solid black",
-            "border-radius": "0",
-            "box-shadow": "10px 10px 0px black",
-            "transform": "rotate(1deg)",
-          },
-          ".wallet-btn": {
-            "border": "3px solid black",
-            "background": "white",
-            "font-family": "'IBM Plex Mono', monospace",
-            "transform": "rotate(-0.5deg)",
-            "box-shadow": "4px 4px 0 black",
-            "transition": "all 0.1s ease",
-            "&:hover": {
-              "transform": "translate(-2px, -2px) rotate(-0.5deg)",
-              "box-shadow": "6px 6px 0 black",
-            },
-            "&:active": {
-              "transform": "translate(2px, 2px) rotate(-0.5deg)",
-              "box-shadow": "2px 2px 0 black",
-            }
-          }
-        },
 
+          "--rounded-box": "0rem",
+          "--rounded-btn": "0.15rem",
+          "--rounded-badge": "0rem",
+          "--animation-btn": "0.3s",
+          "--animation-input": "0.2s",
+          "--btn-text-case": "uppercase",
+          "--btn-focus-scale": "0.95",
+          "--border-btn": "1px",
+          "--tab-border": "1px",
+          "--tab-radius": "0rem",
+        }
       }
     ]
-  }
+  },
 }

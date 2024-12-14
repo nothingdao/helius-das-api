@@ -3,155 +3,14 @@ import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom'
 import { WalletConnection } from './components/WalletConnection'
 import { useWallet } from '@solana/wallet-adapter-react'
 import * as React from 'react'
-import { ExternalLink } from 'lucide-react'
 import { StyleSwitcher } from './components/StyleSwitcher'
-
-const HomePage = () => {
-  return (
-    <div className="max-w-3xl mx-auto space-y-8">
-      <section className="space-y-4">
-        <h1 className="text-3xl font-bold">Branded Solana Wallet UI Demo</h1>
-        <p className="text-lg">
-          This is a demonstration of a customizable Solana wallet interface that you can brand
-          to match your application's design. It features a clean, modern UI with theme support
-          and a modular component structure.
-        </p>
-      </section>
-
-      <section className="space-y-4">
-        <h2 className="text-2xl font-semibold">Quick Integration Guide</h2>
-        <div className="space-y-2">
-          <p>To integrate these components into your existing React project, you need:</p>
-
-          <div className="bg-base-200 p-4 rounded-lg space-y-4">
-            <div>
-              <h3 className="font-semibold mb-2">1. Install Dependencies</h3>
-              <code className="block bg-base-300 p-3 rounded">
-                npm install @solana/web3.js @solana/wallet-adapter-react @solana/wallet-adapter-wallets @solana/wallet-adapter-react-ui
-              </code>
-            </div>
-
-            <div>
-              <h3 className="font-semibold mb-2">2. Wrap Your App</h3>
-              <code className="block bg-base-300 p-3 rounded">
-                {`<WalletContextProvider>\n  <YourApp />\n</WalletContextProvider>`}
-              </code>
-            </div>
-
-            <div>
-              <h3 className="font-semibold mb-2">3. Use the Components</h3>
-              <code className="block bg-base-300 p-3 rounded">
-                {`import { WalletConnection } from './components/WalletConnection'\n\n// Then in your component:\n<WalletConnection />`}
-              </code>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <section className="space-y-4">
-        <h2 className="text-2xl font-semibold">Features Demo</h2>
-        <ul className="list-disc list-inside space-y-2">
-          <li>Theme switching (try the paint icon up top)</li>
-          <li>Wallet connection modal with multiple wallet support</li>
-          <li>Responsive wallet button with dropdown menu</li>
-          <li>Protected content on the <a className="link" href="/dashboard">Dashboard page</a></li>
-        </ul>
-      </section>
-
-      <section className="bg-base-200 p-4 rounded-lg">
-        <h2 className="text-xl font-semibold mb-2">Try It Out</h2>
-        <p>
-          Connect your wallet and visit the <a className="link" href="/dashboard">Dashboard</a> to see the gated content demonstration.
-          The dashboard page will adapt its content based on your wallet connection state.
-        </p>
-      </section>
-
-      <section className="text-sm text-base-content/70">
-        <p>
-          View the full source code and documentation on{' '}
-          <a
-            href="https://github.com/helius-das-api"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="inline-flex items-center gap-1 text-primary hover:underline"
-          >
-            GitHub <ExternalLink className="w-3 h-3" />
-          </a>
-        </p>
-      </section>
-    </div>
-  )
-}
-
-// Enhanced AuthenticatedContent component
-const AuthenticatedContent = () => {
-  const { publicKey, connecting, disconnecting } = useWallet()
-
-  if (connecting) {
-    return (
-      <div className="max-w-3xl mx-auto">
-        <div className="bg-base-200 p-6 rounded-lg text-center">
-          <h2 className="text-xl font-semibold mb-2">Connecting to Wallet...</h2>
-          <p>Please approve the connection request in your wallet.</p>
-        </div>
-      </div>
-    )
-  }
-
-  if (disconnecting) {
-    return (
-      <div className="max-w-3xl mx-auto">
-        <div className="bg-base-200 p-6 rounded-lg text-center">
-          <h2 className="text-xl font-semibold mb-2">Disconnecting...</h2>
-          <p>Cleaning up your session.</p>
-        </div>
-      </div>
-    )
-  }
-
-  if (!publicKey) {
-    return (
-      <div className="max-w-3xl mx-auto">
-        <div className="bg-base-200 p-6 rounded-lg">
-          <h2 className="text-xl font-semibold mb-2">Wallet Required</h2>
-          <p className="mb-4">
-            This is an example of gated content that requires a connected wallet to view.
-            Please connect your wallet using the button in the top right corner.
-          </p>
-          <p className="text-sm text-base-content/70">
-            Don't have a Solana wallet?{' '}
-            <a
-              href="https://phantom.app/"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-primary hover:underline inline-flex items-center gap-1"
-            >
-              Get started with Phantom <ExternalLink className="w-3 h-3" />
-            </a>
-          </p>
-        </div>
-      </div>
-    )
-  }
-
-  return (
-    <div className="max-w-3xl mx-auto">
-      <div className="bg-base-200 p-6 rounded-lg">
-        <h2 className="text-xl font-semibold mb-2">Welcome to the Dashboard!</h2>
-        <p className="mb-4">
-          This is an example of gated content that's only visible to users with a connected wallet.
-          Your wallet address is: <code className="bg-base-300 px-2 py-1 rounded">{publicKey.toBase58()}</code>
-        </p>
-        <div className="text-sm text-base-content/70">
-          <p>
-            In a real application, you could display user-specific data, transaction history,
-            or other wallet-dependent content here.
-          </p>
-        </div>
-      </div>
-    </div>
-  )
-}
+import GetAssetComponent from './components/methods/GetAssetComponent'
+import { DAS_METHODS } from './lib/das-types'
+import GetAssetBatchComponent from './components/methods/GetAssetBatchComponent'
+import GetAssetProofBatchComponent from './components/methods/GetAssetProofBatchComponent'
+import GetAssetProofComponent from './components/methods/GetAssetProofComponent'
+import SearchAssetsComponent from './components/methods/SearchAssetsComponent'
+import GetAssetsByOwnerComponent from './components/methods/GetAssetsByOwnerComponent'
 
 export const App: React.FC = () => {
   const { publicKey } = useWallet()
@@ -159,7 +18,9 @@ export const App: React.FC = () => {
   return (
 
     <Router>
-      <div className='min-h-screen bg-base-100 text-base-content'>
+
+      <div className="flex min-h-screen flex-col">
+        {/* Navbar */}
         <nav className='navbar bg-base-200 p-4'>
           <div className='container mx-auto'>
             <div className='flex-1 flex items-center gap-4'>
@@ -167,7 +28,7 @@ export const App: React.FC = () => {
                 to='/'
                 className='flex items-center gap-2 hover:text-primary'
               >
-                Home
+                helius-das-api
               </Link>
               {publicKey && (
                 <Link
@@ -186,13 +47,44 @@ export const App: React.FC = () => {
           </div>
         </nav>
 
-        <main className='container mx-auto p-4'>
-          <Routes>
-            <Route path='/' element={<HomePage />} />
-            <Route path='/dashboard' element={<AuthenticatedContent />} />
-          </Routes>
-        </main>
+        {/* Content Section */}
+        <div className="flex flex-1">
+          {/* Sidebar */}
+          <nav className="w-64 bg-base-100 p-4 border-r border-base-300 text-sm">
+            <div className="mb-4">
+              <h2 className="">DAS API Methods</h2>
+            </div>
+            <ul className="space-y-2">
+              {DAS_METHODS.map((method) => (
+                <li key={method.id}>
+                  <Link
+                    to={method.path}
+                    className="block px-4 py-2 hover:bg-base-200 rounded-lg transition-colors"
+                  >
+                    {method.name}
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </nav>
+
+          {/* Main Content */}
+          <div className="flex-1 p-4">
+            <Routes>
+              {/* Define routes for DAS methods */}
+              <Route path="/das/get-asset" element={<GetAssetComponent />} />
+              <Route path="/das/get-asset-batch" element={<GetAssetBatchComponent />} />
+              <Route path="/das/get-asset-proof" element={<GetAssetProofComponent />} />
+              <Route path="/das/get-asset-proof-batch" element={<GetAssetProofBatchComponent />} />
+              <Route path="/das/search-assets" element={<SearchAssetsComponent />} />
+              <Route path="/das/get-assets-by-owner" element={<GetAssetsByOwnerComponent />} />
+            </Routes>
+          </div>
+        </div>
       </div>
+
+
+
     </Router>
   )
 }

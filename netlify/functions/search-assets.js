@@ -1,14 +1,12 @@
-// netlify/functions/get-asset.js
+// netlify/functions/search-assets.js
 export const handler = async (event) => {
-  // Add CORS headers
   const headers = {
-    'Access-Control-Allow-Origin': '*', // Be more restrictive in production
+    'Access-Control-Allow-Origin': '*',
     'Access-Control-Allow-Headers': 'Content-Type',
     'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
     'Content-Type': 'application/json'
   };
 
-  // Handle preflight requests
   if (event.httpMethod === 'OPTIONS') {
     return {
       statusCode: 200,
@@ -28,28 +26,17 @@ export const handler = async (event) => {
   }
 
   try {
-    const { assetId, showFungible, showInscription, showUnverifiedCollections, showCollectionMetadata } = event.queryStringParameters || {};
+    const searchParams = JSON.parse(event.body);
 
-    if (!assetId) {
-      return {
-        statusCode: 400,
-        headers,
-        body: JSON.stringify({ error: "Missing 'assetId' parameter" })
-      };
-    }
-
-    const body = {
+    // Build the request params
+    const requestBody = {
       jsonrpc: "2.0",
       id: "helius-test",
-      method: "getAsset",
+      method: "searchAssets",
       params: {
-        id: assetId,
-        displayOptions: {
-          ...(showFungible && { showFungible: showFungible === "true" }),
-          ...(showInscription && { showInscription: showInscription === "true" }),
-          ...(showUnverifiedCollections && { showUnverifiedCollections: showUnverifiedCollections === "true" }),
-          ...(showCollectionMetadata && { showCollectionMetadata: showCollectionMetadata === "true" })
-        }
+        ...searchParams,
+        page: searchParams.page || 1,
+        limit: Math.min(searchParams.limit || 100, 1000)
       }
     };
 
@@ -58,12 +45,11 @@ export const handler = async (event) => {
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify(body),
+      body: JSON.stringify(requestBody),
     });
 
     const data = await response.json();
 
-    // Check for errors in the Helius API response
     if (data.error) {
       return {
         statusCode: 400,
@@ -78,7 +64,7 @@ export const handler = async (event) => {
       body: JSON.stringify(data)
     };
   } catch (error) {
-    console.error('Error in get-asset function:', error);
+    console.error('Error in search-assets function:', error);
 
     return {
       statusCode: 500,

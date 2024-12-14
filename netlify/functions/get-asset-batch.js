@@ -1,8 +1,7 @@
-// netlify/functions/get-asset.js
+// netlify/functions/get-asset-batch.js
 export const handler = async (event) => {
-  // Add CORS headers
   const headers = {
-    'Access-Control-Allow-Origin': '*', // Be more restrictive in production
+    'Access-Control-Allow-Origin': '*',
     'Access-Control-Allow-Headers': 'Content-Type',
     'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
     'Content-Type': 'application/json'
@@ -28,22 +27,31 @@ export const handler = async (event) => {
   }
 
   try {
-    const { assetId, showFungible, showInscription, showUnverifiedCollections, showCollectionMetadata } = event.queryStringParameters || {};
+    // Parse the request body to get the asset IDs
+    const { assetIds, showFungible, showInscription, showUnverifiedCollections, showCollectionMetadata } = JSON.parse(event.body);
 
-    if (!assetId) {
+    if (!assetIds || !Array.isArray(assetIds) || assetIds.length === 0) {
       return {
         statusCode: 400,
         headers,
-        body: JSON.stringify({ error: "Missing 'assetId' parameter" })
+        body: JSON.stringify({ error: "Missing or invalid 'assetIds' in request body" })
+      };
+    }
+
+    if (assetIds.length > 1000) {
+      return {
+        statusCode: 400,
+        headers,
+        body: JSON.stringify({ error: "Cannot request more than 1000 assets at once" })
       };
     }
 
     const body = {
       jsonrpc: "2.0",
       id: "helius-test",
-      method: "getAsset",
+      method: "getAssetBatch",
       params: {
-        id: assetId,
+        ids: assetIds,
         displayOptions: {
           ...(showFungible && { showFungible: showFungible === "true" }),
           ...(showInscription && { showInscription: showInscription === "true" }),
@@ -78,7 +86,7 @@ export const handler = async (event) => {
       body: JSON.stringify(data)
     };
   } catch (error) {
-    console.error('Error in get-asset function:', error);
+    console.error('Error in get-asset-batch function:', error);
 
     return {
       statusCode: 500,

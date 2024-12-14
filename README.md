@@ -1,41 +1,37 @@
-# Solana Wallet UI Branded
+# Helius DAS API Interface
 
-<img width="1436" alt="Screen Shot 2024-12-07 at 5 08 11 PM" src="https://github.com/user-attachments/assets/fc81cd3e-9fa5-4fa0-9fe7-404bac77f646">
+A comprehensive web interface for interacting with the Helius Digital Asset Standards (DAS) API on Solana. This project provides a user-friendly dashboard for querying and managing digital assets, including NFTs, compressed NFTs, and fungible tokens.
 
-Take full control over your Solana wallet UI components. This repo demonstrates how to style the wallet adapter while maintaining clean separation of concerns.
+![Static Badge](https://img.shields.io/badge/solana-mainnet-success)
+![GitHub License](https://img.shields.io/badge/license-MIT-blue)
+![Status](https://img.shields.io/badge/status-in%20development-orange)
 
-## Overview
+## Features
 
-Instead of wrestling with the default Solana wallet UI styles buried in node_modules, this implementation provides direct control over every component. Includes several theme presets demonstrating the styling possibilities.
+- 🔐 Wallet authentication (Phantom, Solflare, etc.)
+- 📊 Asset portfolio viewing
+- 🖼️ NFT metadata display
+- 💎 Compressed NFT support
+- 💰 Token balance tracking
+- 🔍 Advanced asset search
+- 🌓 Light/dark mode support
+- 💻 Responsive design
 
-## Using This Repository
+## Development Setup
 
-There are three ways to use this codebase:
+### Prerequisites
 
-### Option 1: Quick Start with create-solana-dapp
+- Node.js >= 18
+- Helius API Key
+- Solana Wallet
 
-The fastest way to get started:
-
-```bash
-npx create-solana-dapp@latest --template helius-das-api
-```
-
-This will create a new project with all dependencies installed and ready to run.
-
-Made possible by the excellent work from:
-
-- [create-solana-dapp](https://github.com/solana-developers/create-solana-dapp) by [@solana_devs](https://twitter.com/solana_devs)
-- [Solana Developers](https://github.com/solana-developers)
-
-### Option 2: Clone and Run
-
-If you want to run this repo directly:
+### Installation
 
 1. Clone the repository:
 
 ```bash
-git clone https://github.com/helius-das-api
-cd solana-wallet-ui-branded
+git clone https://github.com/nothingdao/helius-das-api.git
+cd helius-das-api
 ```
 
 2. Install dependencies:
@@ -44,142 +40,174 @@ cd solana-wallet-ui-branded
 npm install
 ```
 
-3. Start the development server:
+3. Create a `.env` file:
+
+```env
+HELIUS_API_KEY="your-helius-api-key"
+```
+
+4. Start the development server:
+
+For Netlify:
 
 ```bash
-npm run dev
+netlify dev
 ```
 
-### Option 3: Implementing in Your Existing Project
-
-To integrate these components into your project:
-
-1. Install required dependencies:
+For Vercel:
 
 ```bash
-npm install @solana/web3.js @solana/wallet-adapter-react @solana/wallet-adapter-wallets
+vercel dev
 ```
 
-2. Copy the core components from `src/components`:
+## Project Structure
 
-- WalletContext.tsx
-- WalletConnection.tsx
-- WalletModal.tsx
-- StyleContext.tsx (optional - for theme support)
-- StyleSwitcher.tsx (optional - for theme support)
-
-3. Set up the providers in your app:
-
-```tsx
-import { WalletContextProvider } from './components/WalletContext'
-import { StyleProvider } from './components/StyleContext' // optional
-
-function App() {
-  return (
-    <StyleProvider>
-      <WalletContextProvider>
-        <YourApp />
-      </WalletContextProvider>
-    </StyleProvider>
-  )
-}
+```
+src/
+├── components/              # React components
+│   ├── methods/            # DAS API method components
+│   └── shared/             # Shared/common components
+├── lib/                    # Core API utilities
+├── netlify/                # Netlify serverless functions
+│   └── functions/
+├── pages/                  # Vercel API routes
+│   └── api/
+└── types/                  # TypeScript type definitions
 ```
 
-## Components
+## Implementation Status
 
-### WalletConnection.tsx
+### ✅ Completed
 
-- Main connection button
-- Shows "Connect Wallet" or truncated address
-- Manages dropdown menu when connected
+#### Core Setup
 
-### WalletModal.tsx
+- [x] Project structure
+- [x] Wallet connection
+- [x] Basic routing
 
-- Wallet selection modal
-- Lists available wallets
-- Shows installation status
+#### DAS API Methods
 
-### WalletContext.tsx
+- [x] Get Asset
+- [x] Get Asset Batch
+- [x] Get Asset Proof
+- [x] Get Asset Proof Batch
+- [x] Search Assets
+- [x] Get Asset by Owner
 
-- Sets up wallet providers
-- Configures network connection
-- Manages available wallets
+### 🚧 In Progress
 
-### Style Components (Optional)
+#### DAS API Methods
 
-- StyleContext.tsx: Theme state management
-- StyleSwitcher.tsx: Theme preset selection
+- [ ] Get Assets by Authority
+- [ ] Get Assets by Creator
+- [ ] Get Assets by Group
 
-## Theme Showcase
+#### Features
 
-The demo includes five distinct themes showing the styling possibilities:
+- [ ] Asset type filtering
+- [ ] Batch operations
+- [ ] Advanced sorting options
+- [ ] Error boundaries
 
-### Corporate
+### 📋 Planned
 
-Professional design with clean lines and subtle shadows.
+#### DAS API Methods
 
-### Cyberpunk
+- [ ] Get Signatures for Asset
+- [ ] Get Token Accounts
+- [ ] Get NFT Events
+- [ ] Get Collections
+- [ ] Search Collections
 
-Neon gradients, glowing effects, and dark contrasts.
+#### Features
 
-### Minimal
+- [ ] Asset price tracking
+- [ ] Portfolio analytics
+- [ ] Bulk operations
+- [ ] Data export
+- [ ] Advanced filtering
 
-Black and white, clean typography, no decorative elements.
+#### Technical
 
-### Playful
+- [ ] Unit tests
+- [ ] E2E tests
+- [ ] CI/CD setup
+- [ ] API documentation
+- [ ] Performance optimization
 
-Soft shadows, rounded corners, friendly animations.
+## Deployment Options
 
-### Brutalist
+### Netlify Deployment
 
-Raw HTML aesthetic with aggressive styling.
+1. Set up your environment variables in Netlify:
 
-## Styling System
-
-The demo uses Tailwind CSS and DaisyUI but works with any styling approach:
-
-```jsx
-// With CSS Modules
-<button className={styles.walletButton}>
-
-// With styled-components
-const WalletButton = styled.button`
-  your-styles-here
-`
-
-// With plain CSS
-<button className="wallet-button">
+```
+HELIUS_API_KEY=your_api_key_here
 ```
 
-## Customization
+2. Deploy using the Netlify CLI or connect your repository to Netlify
 
-### Wallet Adapters
+Available at `/.netlify/functions/[endpoint]`
 
-```jsx
-const wallets = [
-  new PhantomWalletAdapter(),
-  new SolflareWalletAdapter(),
-  // Add more wallets
-]
+### Vercel Deployment
+
+1. Set up your environment variables in Vercel:
+
+```
+HELIUS_API_KEY=your_api_key_here
 ```
 
-### Network Configuration
+2. Deploy using the Vercel CLI or connect your repository to Vercel
 
-```jsx
-const endpoint = clusterApiUrl('mainnet-beta')
+Available at `/api/[endpoint]`
+
+## API Endpoints
+
+### Currently Implemented
+
+| Endpoint                | Status | Description                           |
+| ----------------------- | ------ | ------------------------------------- |
+| `get-asset`             | ✅     | Get an asset by its ID                |
+| `get-asset-batch`       | ✅     | Get multiple assets by their IDs      |
+| `get-assets-by-owner`   | ✅     | Get assets owned by an address        |
+| `search-assets`         | ✅     | Search assets with various filters    |
+| `get-asset-proof`       | 🚧     | Get merkle proof for compressed asset |
+| `get-asset-proof-batch` | 🚧     | Get multiple asset proofs             |
+
+### Available Methods
+
+Each endpoint supports both Netlify and Vercel deployments:
+
+Netlify:
+
+```
+/.netlify/functions/[endpoint]
 ```
 
-### Behavior
+Vercel:
 
-- Auto-connect settings
-- Address display format
-- Modal animations
-- Theme persistence
+```
+/api/[endpoint]
+```
 
 ## Contributing
 
-Contributions welcome! Please feel free to submit a Pull Request.
+1. Fork the repository
+2. Create your feature branch (`git checkout -b feature/amazing-feature`)
+3. Commit your changes (`git commit -m 'Add amazing feature'`)
+4. Push to the branch (`git push origin feature/amazing-feature`)
+5. Open a Pull Request
 
 ## License
 
-MIT License - use freely in your own projects.
+[MIT License](LICENSE)
+
+## Acknowledgments
+
+- [Helius](https://helius.xyz/) - DAS API provider
+- [DaisyUI](https://daisyui.com/) - UI components
+- [@solana/web3.js](https://solana-labs.github.io/solana-web3.js/) - Solana integration
+
+## Support
+
+For support, please open an issue or refer to the [Helius Documentation](https://docs.helius.xyz/).

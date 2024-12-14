@@ -1,14 +1,12 @@
-// netlify/functions/get-asset.js
+// netlify/functions/get-assets-by-owner.js
 export const handler = async (event) => {
-  // Add CORS headers
   const headers = {
-    'Access-Control-Allow-Origin': '*', // Be more restrictive in production
+    'Access-Control-Allow-Origin': '*',
     'Access-Control-Allow-Headers': 'Content-Type',
     'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
     'Content-Type': 'application/json'
   };
 
-  // Handle preflight requests
   if (event.httpMethod === 'OPTIONS') {
     return {
       statusCode: 200,
@@ -28,28 +26,44 @@ export const handler = async (event) => {
   }
 
   try {
-    const { assetId, showFungible, showInscription, showUnverifiedCollections, showCollectionMetadata } = event.queryStringParameters || {};
+    const searchParams = JSON.parse(event.body);
+    const { ownerAddress, page = 1, limit = 100, sortBy, before, after, options = {} } = searchParams;
 
-    if (!assetId) {
+    if (!ownerAddress) {
       return {
         statusCode: 400,
         headers,
-        body: JSON.stringify({ error: "Missing 'assetId' parameter" })
+        body: JSON.stringify({ error: "Missing required 'ownerAddress' parameter" })
       };
     }
 
     const body = {
       jsonrpc: "2.0",
       id: "helius-test",
-      method: "getAsset",
+      method: "getAssetsByOwner",
       params: {
-        id: assetId,
-        displayOptions: {
-          ...(showFungible && { showFungible: showFungible === "true" }),
-          ...(showInscription && { showInscription: showInscription === "true" }),
-          ...(showUnverifiedCollections && { showUnverifiedCollections: showUnverifiedCollections === "true" }),
-          ...(showCollectionMetadata && { showCollectionMetadata: showCollectionMetadata === "true" })
-        }
+        ownerAddress,
+        page,
+        limit: Math.min(limit, 1000),
+        ...(sortBy && {
+          sortBy: {
+            sortBy: sortBy.sortBy || 'created',
+            sortDirection: sortBy.sortDirection || 'desc'
+          }
+        }),
+        ...(before && { before }),
+        ...(after && { after }),
+        ...(Object.keys(options).length > 0 && {
+          options: {
+            showUnverifiedCollections: options.showUnverifiedCollections,
+            showCollectionMetadata: options.showCollectionMetadata,
+            showGrandTotal: options.showGrandTotal,
+            showFungible: options.showFungible,
+            showNativeBalance: options.showNativeBalance,
+            showInscription: options.showInscription,
+            showZeroBalance: options.showZeroBalance
+          }
+        })
       }
     };
 
@@ -63,7 +77,6 @@ export const handler = async (event) => {
 
     const data = await response.json();
 
-    // Check for errors in the Helius API response
     if (data.error) {
       return {
         statusCode: 400,
@@ -78,7 +91,7 @@ export const handler = async (event) => {
       body: JSON.stringify(data)
     };
   } catch (error) {
-    console.error('Error in get-asset function:', error);
+    console.error('Error in get-assets-by-owner function:', error);
 
     return {
       statusCode: 500,
