@@ -17,7 +17,7 @@ export default defineConfig({
       '@components': path.resolve(__dirname, './src/components'),
     },
   },
-  assetsInclude: ['**/*.html'], // Add this line
+  // assetsInclude: ['**/*.html'], // Add this line
   build: {
     // Optimize build output
     target: 'esnext',
