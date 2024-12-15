@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { AlertCircle, CheckCircle2, Info, ArrowLeft, ArrowRight } from "lucide-react";
 
 interface SortBy {

@@ -4,23 +4,18 @@ import { useWallet } from '@solana/wallet-adapter-react'
 import { ChevronDown, Wallet, LogOut, Settings, History } from 'lucide-react'
 import { PublicKey } from '@solana/web3.js'
 import { WalletModal } from './WalletModal'
+import { Button } from '@/components/ui/button'
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger
+} from '@/components/ui/dropdown-menu'
 
 export const WalletConnection: React.FC = () => {
   const { publicKey, connected, disconnect } = useWallet()
-  const [isDropdownOpen, setIsDropdownOpen] = React.useState<boolean>(false)
   const [isWalletModalOpen, setIsWalletModalOpen] = React.useState<boolean>(false)
-  const dropdownRef = React.useRef<HTMLDivElement | null>(null)
-
-  React.useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
-        setIsDropdownOpen(false)
-      }
-    }
-
-    document.addEventListener('mousedown', handleClickOutside)
-    return () => document.removeEventListener('mousedown', handleClickOutside)
-  }, [])
 
   const truncatePublicKey = (key: PublicKey | null): string => {
     if (!key) return ''
@@ -29,71 +24,54 @@ export const WalletConnection: React.FC = () => {
   }
 
   return (
-    <div className="relative" ref={dropdownRef}>
+    <div className="relative">
       {connected ? (
-        <>
-          <button
-            onClick={() => setIsDropdownOpen(!isDropdownOpen)}
-            className="btn btn-sm btn-outline flex items-center gap-2"
-          >
-            <Wallet className="w-4 h-4" />
-            {truncatePublicKey(publicKey)}
-            <ChevronDown
-              className={`w-4 h-4 transition-transform ${isDropdownOpen ? 'rotate-180' : ''}`}
-            />
-          </button>
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button variant="outline" size="sm" className="flex items-center gap-2">
+              <Wallet className="w-3 h-3" />
+              {truncatePublicKey(publicKey)}
+              <ChevronDown className="w- h-4 ml-2" />
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end" className="w-48">
+            <DropdownMenuItem
+              onSelect={() => console.log('Transaction History clicked')}
+              className="cursor-pointer"
+            >
+              <History className="mr-2 h-4 w-4" />
+              <span>Transactions</span>
+            </DropdownMenuItem>
 
-          {isDropdownOpen && (
-            <div className="absolute right-0 mt-2 w-48 rounded-lg bg-base-200 shadow-xl z-50">
-              <ul className="py-2">
-                <li>
-                  <button
-                    onClick={() => {
-                      console.log('Transaction History clicked')
-                      setIsDropdownOpen(false)
-                    }}
-                    className="w-full px-4 py-2 text-left hover:bg-base-300 flex items-center gap-2"
-                  >
-                    <History className="w-4 h-4" />
-                    Transactions
-                  </button>
-                </li>
-                <li>
-                  <button
-                    onClick={() => {
-                      console.log('Settings clicked')
-                      setIsDropdownOpen(false)
-                    }}
-                    className="w-full px-4 py-2 text-left hover:bg-base-300 flex items-center gap-2"
-                  >
-                    <Settings className="w-4 h-4" />
-                    Settings
-                  </button>
-                </li>
-                <li className="border-t border-base-300">
-                  <button
-                    onClick={() => {
-                      disconnect()
-                      setIsDropdownOpen(false)
-                    }}
-                    className="w-full px-4 py-2 text-left text-error hover:bg-base-300 flex items-center gap-2"
-                  >
-                    <LogOut className="w-4 h-4" />
-                    Disconnect
-                  </button>
-                </li>
-              </ul>
-            </div>
-          )}
-        </>
+            <DropdownMenuItem
+              onSelect={() => console.log('Settings clicked')}
+              className="cursor-pointer"
+            >
+              <Settings className="mr-2 h-4 w-4" />
+              <span>Settings</span>
+            </DropdownMenuItem>
+
+            <DropdownMenuSeparator />
+
+            <DropdownMenuItem
+              onSelect={() => disconnect()}
+              className="cursor-pointer text-destructive focus:text-destructive"
+            >
+              <LogOut className="mr-2 h-4 w-4" />
+              <span>Disconnect</span>
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
       ) : (
-        <button
+        <Button
+          variant="outline"
+          size="sm"
           onClick={() => setIsWalletModalOpen(true)}
-          className="btn btn-sm btn-outline flex items-center gap-2"
+          className="flex items-center gap-2"
         >
           <Wallet className="w-4 h-4" />
           Connect Wallet
-        </button>
+        </Button>
       )}
 
       <WalletModal
@@ -103,3 +81,5 @@ export const WalletConnection: React.FC = () => {
     </div>
   )
 }
+
+export default WalletConnection

@@ -14,7 +14,6 @@ export default defineConfig({
     alias: {
       // Set up path aliases for cleaner imports
       '@': path.resolve(__dirname, './src'),
-      '@components': path.resolve(__dirname, './src/components'),
     },
   },
   // assetsInclude: ['**/*.html'], // Add this line

@@ -1,6 +1,11 @@
 // src/components/methods/GetAssetProofComponent.tsx
 import React, { useState } from "react";
 import { AlertCircle, CheckCircle2, Copy, Info } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Alert } from "@/components/ui/alert";
+import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
+import { toast } from "sonner";
 
 interface ProofResponse {
   jsonrpc: string;
@@ -37,7 +42,7 @@ const GetAssetProofComponent = () => {
       const data = await res.json();
 
       if (data.error) {
-        throw new Error(data.error.message || 'Error fetching proof');
+        throw new Error(data.error.message || "Error fetching proof");
       }
 
       setResponse(data);
@@ -50,6 +55,7 @@ const GetAssetProofComponent = () => {
 
   const copyToClipboard = (text: string) => {
     navigator.clipboard.writeText(text);
+    toast("Copied to clipboard!");
   };
 
   return (
@@ -59,10 +65,10 @@ const GetAssetProofComponent = () => {
         <p className="text-base-content/70">
           Get a merkle proof for a compressed NFT (cNFT) by its ID. This proof is essential for transactions involving compressed NFTs.
         </p>
-        <div className="alert alert-info mt-4">
+        <Alert variant="default" className="mt-4">
           <Info className="w-4 h-4" />
           <span>Note: Asset proofs are only available for compressed NFTs.</span>
-        </div>
+        </Alert>
       </div>
 
       <div className="space-y-4">
@@ -70,107 +76,110 @@ const GetAssetProofComponent = () => {
           <label htmlFor="assetId" className="block text-sm font-medium mb-2">
             Asset ID
           </label>
-          <input
+          <Input
             id="assetId"
             type="text"
             value={assetId}
             onChange={(e) => setAssetId(e.target.value)}
-            className="input input-bordered w-full"
             placeholder="Enter Asset ID"
           />
         </div>
 
-        <button
+        <Button
           onClick={handleRun}
           disabled={!assetId || loading}
-          className="btn btn-primary w-full"
+          className="w-full"
         >
-          {loading ? 'Loading...' : 'Run'}
-        </button>
+          {loading ? "Loading..." : "Run"}
+        </Button>
 
         {error && (
-          <div className="alert alert-error">
+          <Alert variant="destructive" className="mt-4">
             <AlertCircle className="w-4 h-4" />
             <span>{error}</span>
-          </div>
+          </Alert>
         )}
 
         {response && !error && (
           <div className="space-y-4">
-            <div className="alert alert-success">
+            <Alert variant="default">
               <CheckCircle2 className="w-4 h-4" />
               <span>Successfully retrieved proof</span>
-            </div>
+            </Alert>
 
             <div className="space-y-4">
-              <div className="card bg-base-200">
-                <div className="card-body">
-                  <h3 className="card-title text-lg">Proof Details</h3>
-                  <div className="space-y-2">
-                    <div className="flex justify-between items-start">
-                      <div>
-                        <p className="font-semibold">Root:</p>
-                        <p className="text-sm break-all">{response.result.root}</p>
-                      </div>
-                      <button
-                        className="btn btn-ghost btn-sm"
-                        onClick={() => copyToClipboard(response.result.root)}
-                      >
-                        <Copy className="w-4 h-4" />
-                      </button>
-                    </div>
-
+              <Card>
+                <CardHeader>
+                  <CardTitle>Proof Details</CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-2">
+                  <div className="flex justify-between items-start">
                     <div>
-                      <div className="flex justify-between items-center">
-                        <p className="font-semibold">Proof ({response.result.proof.length} nodes):</p>
-                        <button
-                          className="btn btn-ghost btn-sm"
-                          onClick={() => copyToClipboard(JSON.stringify(response.result.proof))}
-                        >
-                          <Copy className="w-4 h-4" />
-                        </button>
-                      </div>
-                      <div className="bg-base-300 p-2 rounded-lg mt-2">
-                        <pre className="text-xs overflow-auto max-h-40">
-                          {JSON.stringify(response.result.proof, null, 2)}
-                        </pre>
-                      </div>
+                      <p className="font-semibold">Root:</p>
+                      <p className="text-sm break-all">{response.result.root}</p>
                     </div>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => copyToClipboard(response.result.root)}
+                    >
+                      <Copy className="w-4 h-4" />
+                    </Button>
+                  </div>
 
-                    <div className="grid grid-cols-2 gap-4">
-                      <div>
-                        <p className="font-semibold">Node Index:</p>
-                        <p className="text-sm">{response.result.node_index}</p>
-                      </div>
-                      <div className="flex justify-between items-start">
-                        <div>
-                          <p className="font-semibold">Tree ID:</p>
-                          <p className="text-sm break-all">{response.result.tree_id}</p>
-                        </div>
-                        <button
-                          className="btn btn-ghost btn-sm"
-                          onClick={() => copyToClipboard(response.result.tree_id)}
-                        >
-                          <Copy className="w-4 h-4" />
-                        </button>
-                      </div>
-                    </div>
-
-                    <div className="flex justify-between items-start">
-                      <div>
-                        <p className="font-semibold">Leaf:</p>
-                        <p className="text-sm break-all">{response.result.leaf}</p>
-                      </div>
-                      <button
-                        className="btn btn-ghost btn-sm"
-                        onClick={() => copyToClipboard(response.result.leaf)}
+                  <div>
+                    <div className="flex justify-between items-center">
+                      <p className="font-semibold">Proof ({response.result.proof.length} nodes):</p>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => copyToClipboard(JSON.stringify(response.result.proof))}
                       >
                         <Copy className="w-4 h-4" />
-                      </button>
+                      </Button>
+                    </div>
+                    <div className="bg-base-300 p-2 rounded-lg mt-2">
+                      <pre className="text-xs overflow-auto max-h-40">
+                        {JSON.stringify(response.result.proof, null, 2)}
+                      </pre>
                     </div>
                   </div>
-                </div>
-              </div>
+
+                  <div className="grid grid-cols-2 gap-4">
+                    <div>
+                      <p className="font-semibold">Node Index:</p>
+                      <p className="text-sm">{response.result.node_index}</p>
+                    </div>
+                    <div className="flex justify-between items-start">
+                      <div>
+                        <p className="font-semibold">Tree ID:</p>
+                        <p className="text-sm break-all">{response.result.tree_id}</p>
+                      </div>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => copyToClipboard(response.result.tree_id)}
+                      >
+                        <Copy className="w-4 h-4" />
+                      </Button>
+                    </div>
+                  </div>
+
+                  <div className="flex justify-between items-start">
+                    <div>
+                      <p className="font-semibold">Leaf:</p>
+                      <p className="text-sm break-all">{response.result.leaf}</p>
+                    </div>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => copyToClipboard(response.result.leaf)}
+                    >
+                      <Copy className="w-4 h-4" />
+                    </Button>
+                  </div>
+                </CardContent>
+              </Card>
             </div>
           </div>
         )}

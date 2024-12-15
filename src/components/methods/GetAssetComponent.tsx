@@ -1,6 +1,10 @@
 // src/components/methods/GetAssetComponent.tsx
 import React, { useState } from "react";
 import { AlertCircle, CheckCircle2 } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 
 interface AssetResponse {
   jsonrpc: string;
@@ -30,15 +34,13 @@ const GetAssetComponent = () => {
       // Build the query string with options
       const queryParams = new URLSearchParams({
         assetId: assetId,
-        ...(showFungible && { showFungible: 'true' }),
-        ...(showInscription && { showInscription: 'true' }),
-        ...(showUnverifiedCollections && { showUnverifiedCollections: 'true' }),
-        ...(showCollectionMetadata && { showCollectionMetadata: 'true' })
+        ...(showFungible && { showFungible: "true" }),
+        ...(showInscription && { showInscription: "true" }),
+        ...(showUnverifiedCollections && { showUnverifiedCollections: "true" }),
+        ...(showCollectionMetadata && { showCollectionMetadata: "true" }),
       });
 
-      const res = await fetch(
-        `/.netlify/functions/get-asset?${queryParams.toString()}`
-      );
+      const res = await fetch(`/.netlify/functions/get-asset?${queryParams.toString()}`);
 
       if (!res.ok) {
         throw new Error(`HTTP error! status: ${res.status}`);
@@ -47,7 +49,7 @@ const GetAssetComponent = () => {
       const data = await res.json();
 
       if (data.error) {
-        throw new Error(data.error.message || 'Error fetching asset data');
+        throw new Error(data.error.message || "Error fetching asset data");
       }
 
       setResponse(data);
@@ -62,7 +64,7 @@ const GetAssetComponent = () => {
     <div className="max-w-4xl mx-auto p-6 space-y-6">
       <div className="mb-8">
         <h1 className="text-3xl font-bold mb-2">Get Asset</h1>
-        <p className="text-base-content/70">
+        <p className="">
           Retrieve information about an asset by its ID. This method returns all relevant information,
           including metadata for any NFT (cNFT, pNFT, core NFT) or Token.
         </p>
@@ -73,59 +75,46 @@ const GetAssetComponent = () => {
           <label htmlFor="assetId" className="block text-sm font-medium mb-2">
             Asset ID
           </label>
-          <input
+          <Input
             id="assetId"
-            type="text"
             value={assetId}
             onChange={(e) => setAssetId(e.target.value)}
-            className="input input-bordered w-full"
             placeholder="Enter Asset ID"
           />
         </div>
 
         <div>
-          <button
-            onClick={() => setShowOptions(!showOptions)}
-            className="btn btn-sm btn-ghost"
-          >
-            {showOptions ? 'Hide' : 'Show'} Display Options
-          </button>
+          <Button variant="ghost" size="sm" onClick={() => setShowOptions(!showOptions)}>
+            {showOptions ? "Hide" : "Show"} Display Options
+          </Button>
 
           {showOptions && (
             <div className="mt-4 space-y-2">
               <label className="flex items-center gap-2">
-                <input
-                  type="checkbox"
-                  className="checkbox"
+                <Checkbox
                   checked={showFungible}
-                  onChange={(e) => setShowFungible(e.target.checked)}
+                  onCheckedChange={(checked) => setShowFungible(!!checked)}
                 />
                 <span>Show Fungible</span>
               </label>
               <label className="flex items-center gap-2">
-                <input
-                  type="checkbox"
-                  className="checkbox"
+                <Checkbox
                   checked={showInscription}
-                  onChange={(e) => setShowInscription(e.target.checked)}
+                  onCheckedChange={(checked) => setShowInscription(!!checked)}
                 />
                 <span>Show Inscription</span>
               </label>
               <label className="flex items-center gap-2">
-                <input
-                  type="checkbox"
-                  className="checkbox"
+                <Checkbox
                   checked={showUnverifiedCollections}
-                  onChange={(e) => setShowUnverifiedCollections(e.target.checked)}
+                  onCheckedChange={(checked) => setShowUnverifiedCollections(!!checked)}
                 />
                 <span>Show Unverified Collections</span>
               </label>
               <label className="flex items-center gap-2">
-                <input
-                  type="checkbox"
-                  className="checkbox"
+                <Checkbox
                   checked={showCollectionMetadata}
-                  onChange={(e) => setShowCollectionMetadata(e.target.checked)}
+                  onCheckedChange={(checked) => setShowCollectionMetadata(!!checked)}
                 />
                 <span>Show Collection Metadata</span>
               </label>
@@ -133,29 +122,31 @@ const GetAssetComponent = () => {
           )}
         </div>
 
-        <button
+        <Button
           onClick={handleRun}
           disabled={!assetId || loading}
-          className="btn btn-primary w-full"
+          className="w-full"
         >
-          {loading ? 'Loading...' : 'Run'}
-        </button>
+          {loading ? "Loading..." : "Run"}
+        </Button>
 
         {error && (
-          <div className="alert alert-error">
+          <Alert variant="destructive">
             <AlertCircle className="w-4 h-4" />
-            <span>{error}</span>
-          </div>
+            <AlertTitle>Error</AlertTitle>
+            <AlertDescription>{error}</AlertDescription>
+          </Alert>
         )}
 
         {response && !error && (
           <div className="space-y-4">
-            <div className="alert alert-success">
+            <Alert variant="default">
               <CheckCircle2 className="w-4 h-4" />
-              <span>Successfully retrieved asset data</span>
-            </div>
+              <AlertTitle>Success</AlertTitle>
+              <AlertDescription>Successfully retrieved asset data</AlertDescription>
+            </Alert>
 
-            <div className="bg-base-200 p-4 rounded-lg">
+            <div className="bg-muted p-4 rounded-lg">
               <pre className="overflow-auto max-h-[500px] text-sm">
                 {JSON.stringify(response, null, 2)}
               </pre>

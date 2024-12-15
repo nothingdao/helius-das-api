@@ -1,6 +1,10 @@
 // src/components/methods/GetAssetBatchComponent.tsx
 import React, { useState } from "react";
 import { AlertCircle, CheckCircle2, Plus, X } from "lucide-react";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 
 interface AssetResponse {
   jsonrpc: string;
@@ -9,7 +13,7 @@ interface AssetResponse {
 }
 
 const GetAssetBatchComponent = () => {
-  const [assetIds, setAssetIds] = useState<string[]>(['']);
+  const [assetIds, setAssetIds] = useState<string[]>([""]);
   const [response, setResponse] = useState<null | AssetResponse>(null);
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
@@ -22,12 +26,12 @@ const GetAssetBatchComponent = () => {
   const [showCollectionMetadata, setShowCollectionMetadata] = useState(false);
 
   const handleAddAssetId = () => {
-    setAssetIds([...assetIds, '']);
+    setAssetIds([...assetIds, ""]);
   };
 
   const handleRemoveAssetId = (index: number) => {
     const newAssetIds = assetIds.filter((_, i) => i !== index);
-    setAssetIds(newAssetIds.length ? newAssetIds : ['']);
+    setAssetIds(newAssetIds.length ? newAssetIds : [""]);
   };
 
   const handleAssetIdChange = (index: number, value: string) => {
@@ -41,8 +45,7 @@ const GetAssetBatchComponent = () => {
     setResponse(null);
     setLoading(true);
 
-    // Filter out empty asset IDs
-    const validAssetIds = assetIds.filter(id => id.trim());
+    const validAssetIds = assetIds.filter((id) => id.trim());
 
     if (validAssetIds.length === 0) {
       setError("Please enter at least one asset ID");
@@ -51,17 +54,17 @@ const GetAssetBatchComponent = () => {
     }
 
     try {
-      const res = await fetch('/.netlify/functions/get-asset-batch', {
-        method: 'POST',
+      const res = await fetch("/.netlify/functions/get-asset-batch", {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         body: JSON.stringify({
           assetIds: validAssetIds,
           showFungible,
           showInscription,
           showUnverifiedCollections,
-          showCollectionMetadata
+          showCollectionMetadata,
         }),
       });
 
@@ -72,7 +75,7 @@ const GetAssetBatchComponent = () => {
       const data = await res.json();
 
       if (data.error) {
-        throw new Error(data.error.message || 'Error fetching asset data');
+        throw new Error(data.error.message || "Error fetching asset data");
       }
 
       setResponse(data);
@@ -87,7 +90,7 @@ const GetAssetBatchComponent = () => {
     <div className="max-w-4xl mx-auto p-6 space-y-6">
       <div className="mb-8">
         <h1 className="text-3xl font-bold mb-2">Get Asset Batch</h1>
-        <p className="text-base-content/70">
+        <p className="text-gray-600">
           Retrieve information about multiple assets by their IDs. You can request up to 1,000 assets at once.
         </p>
       </div>
@@ -96,106 +99,88 @@ const GetAssetBatchComponent = () => {
         <div className="space-y-2">
           {assetIds.map((id, index) => (
             <div key={index} className="flex gap-2">
-              <input
+              <Input
                 type="text"
                 value={id}
                 onChange={(e) => handleAssetIdChange(index, e.target.value)}
-                className="input input-bordered flex-1"
                 placeholder="Enter Asset ID"
               />
-              <button
+              <Button
+                variant="outline"
                 onClick={() => handleRemoveAssetId(index)}
-                className="btn btn-ghost btn-square"
                 disabled={assetIds.length === 1}
               >
                 <X className="w-4 h-4" />
-              </button>
+              </Button>
             </div>
           ))}
 
-          <button
-            onClick={handleAddAssetId}
-            className="btn btn-ghost btn-sm"
-            disabled={assetIds.length >= 1000}
-          >
-            <Plus className="w-4 h-4" />
-            Add Asset ID
-          </button>
+          <Button onClick={handleAddAssetId} disabled={assetIds.length >= 1000} variant="ghost">
+            <Plus className="w-4 h-4" /> Add Asset ID
+          </Button>
         </div>
-
         <div>
-          <button
-            onClick={() => setShowOptions(!showOptions)}
-            className="btn btn-sm btn-ghost"
-          >
-            {showOptions ? 'Hide' : 'Show'} Display Options
-          </button>
+          <Button variant="outline" onClick={() => setShowOptions(!showOptions)}>
+            {showOptions ? "Hide" : "Show"} Display Options
+          </Button>
 
           {showOptions && (
             <div className="mt-4 space-y-2">
-              <label className="flex items-center gap-2">
-                <input
-                  type="checkbox"
-                  className="checkbox"
+              <div className="flex items-center gap-2">
+                <Checkbox
                   checked={showFungible}
-                  onChange={(e) => setShowFungible(e.target.checked)}
+                  onCheckedChange={(checked) => setShowFungible(checked as boolean)}
                 />
                 <span>Show Fungible</span>
-              </label>
-              <label className="flex items-center gap-2">
-                <input
-                  type="checkbox"
-                  className="checkbox"
+              </div>
+              <div className="flex items-center gap-2">
+                <Checkbox
                   checked={showInscription}
-                  onChange={(e) => setShowInscription(e.target.checked)}
+                  onCheckedChange={(checked) => setShowInscription(checked as boolean)}
                 />
                 <span>Show Inscription</span>
-              </label>
-              <label className="flex items-center gap-2">
-                <input
-                  type="checkbox"
-                  className="checkbox"
+              </div>
+              <div className="flex items-center gap-2">
+                <Checkbox
                   checked={showUnverifiedCollections}
-                  onChange={(e) => setShowUnverifiedCollections(e.target.checked)}
+                  onCheckedChange={(checked) => setShowUnverifiedCollections(checked as boolean)}
                 />
                 <span>Show Unverified Collections</span>
-              </label>
-              <label className="flex items-center gap-2">
-                <input
-                  type="checkbox"
-                  className="checkbox"
+              </div>
+              <div className="flex items-center gap-2">
+                <Checkbox
                   checked={showCollectionMetadata}
-                  onChange={(e) => setShowCollectionMetadata(e.target.checked)}
+                  onCheckedChange={(checked) => setShowCollectionMetadata(checked as boolean)}
                 />
                 <span>Show Collection Metadata</span>
-              </label>
+              </div>
             </div>
           )}
         </div>
 
-        <button
+        <Button
           onClick={handleRun}
-          disabled={loading || assetIds.every(id => !id.trim())}
-          className="btn btn-primary w-full"
+          disabled={loading || assetIds.every((id) => !id.trim())}
+          className="w-full"
         >
-          {loading ? 'Loading...' : 'Run'}
-        </button>
+          {loading ? "Loading..." : "Run"}
+        </Button>
 
         {error && (
-          <div className="alert alert-error">
+          <Alert variant="destructive">
             <AlertCircle className="w-4 h-4" />
-            <span>{error}</span>
-          </div>
+            <AlertDescription>{error}</AlertDescription>
+          </Alert>
         )}
 
         {response && !error && (
           <div className="space-y-4">
-            <div className="alert alert-success">
+            <Alert variant="default">
               <CheckCircle2 className="w-4 h-4" />
-              <span>Successfully retrieved asset data</span>
-            </div>
+              <AlertTitle>Successfully retrieved asset data</AlertTitle>
+            </Alert>
 
-            <div className="bg-base-200 p-4 rounded-lg">
+            <div className="bg-gray-100 p-4 rounded-lg">
               <pre className="overflow-auto max-h-[500px] text-sm">
                 {JSON.stringify(response, null, 2)}
               </pre>

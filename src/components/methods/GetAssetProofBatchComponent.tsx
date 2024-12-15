@@ -1,5 +1,11 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { AlertCircle, CheckCircle2, Copy, Info, Plus, X } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Alert } from "@/components/ui/alert";
+import { Card } from "@/components/ui/card";
+import { toast } from "sonner";
+
 
 interface AssetResponse {
   result: {
@@ -156,6 +162,7 @@ const GetAssetProofBatchComponent = () => {
 
   const copyToClipboard = (text: string) => {
     navigator.clipboard.writeText(text);
+    toast("Copied to clipboard!");
   };
 
   return (
@@ -165,13 +172,13 @@ const GetAssetProofBatchComponent = () => {
         <p className="text-base-content/70">
           Get merkle proofs for multiple compressed NFTs by their IDs. You can request up to 1,000 proofs at once.
         </p>
-        <div className="alert alert-info mt-4">
+        <Alert variant="default" className="mt-4">
           <Info className="w-4 h-4" />
           <div className="flex flex-col">
             <span>Only compressed NFTs (cNFTs) are supported by this endpoint.</span>
             <span className="text-xs mt-1">Example cNFT IDs: {EXAMPLE_CNFTS.join(', ')}</span>
           </div>
-        </div>
+        </Alert>
       </div>
 
       <div className="space-y-4">
@@ -179,21 +186,20 @@ const GetAssetProofBatchComponent = () => {
           {assetIds.map((id, index) => (
             <div key={index} className="space-y-1">
               <div className="flex gap-2">
-                <input
-                  type="text"
+                <Input
                   value={id}
                   onChange={(e) => handleAssetIdChange(index, e.target.value)}
-                  className={`input input-bordered flex-1 ${warnings[id] ? 'input-warning' : ''
-                    }`}
+                  className={`input input-bordered flex-1 ${warnings[id] ? 'input-warning' : ''}`}
                   placeholder="Enter Asset ID"
                 />
-                <button
+                <Button
                   onClick={() => handleRemoveAssetId(index)}
-                  className="btn btn-ghost btn-square"
+                  variant="ghost"
                   disabled={assetIds.length === 1}
+                  className="btn-square"
                 >
                   <X className="w-4 h-4" />
-                </button>
+                </Button>
               </div>
               {warnings[id] && (
                 <div className="text-warning text-sm px-2">
@@ -203,50 +209,52 @@ const GetAssetProofBatchComponent = () => {
             </div>
           ))}
 
-          <button
+          <Button
             onClick={handleAddAssetId}
-            className="btn btn-ghost btn-sm"
+            variant="ghost"
             disabled={assetIds.length >= 1000}
+            className="btn-sm"
           >
             <Plus className="w-4 h-4" />
             Add Asset ID
-          </button>
+          </Button>
         </div>
 
-        <button
+        <Button
           onClick={handleRun}
           disabled={loading || validating || assetIds.every(id => !id.trim())}
-          className="btn btn-primary w-full"
+          className="btn-primary w-full"
         >
           {validating ? 'Validating...' : loading ? 'Loading...' : 'Run'}
-        </button>
+        </Button>
 
         {error && (
-          <div className="alert alert-error">
+          <Alert variant="default">
             <AlertCircle className="w-4 h-4" />
             <span>{error}</span>
-          </div>
+          </Alert>
         )}
 
         {response && !error && (
           <div className="space-y-4">
-            <div className="alert alert-success">
+            <Alert variant="default">
               <CheckCircle2 className="w-4 h-4" />
               <span>Successfully retrieved proofs</span>
-            </div>
+            </Alert>
 
             <div className="space-y-4">
               {Object.entries(response.result).map(([assetId, proof], index) => (
-                <div key={index} className="card bg-base-200">
+                <Card key={index} className="bg-base-200">
                   <div className="card-body">
                     <h3 className="card-title text-lg flex justify-between items-center">
                       <span className="truncate">Asset: {assetId}</span>
-                      <button
-                        className="btn btn-ghost btn-sm"
+                      <Button
+                        variant="ghost"
+                        size="sm"
                         onClick={() => copyToClipboard(assetId)}
                       >
                         <Copy className="w-4 h-4" />
-                      </button>
+                      </Button>
                     </h3>
                     <div className="space-y-2">
                       <div className="flex justify-between items-start">
@@ -254,23 +262,25 @@ const GetAssetProofBatchComponent = () => {
                           <p className="font-semibold">Root:</p>
                           <p className="text-sm break-all">{proof.root}</p>
                         </div>
-                        <button
-                          className="btn btn-ghost btn-sm"
+                        <Button
+                          variant="ghost"
+                          size="sm"
                           onClick={() => copyToClipboard(proof.root)}
                         >
                           <Copy className="w-4 h-4" />
-                        </button>
+                        </Button>
                       </div>
 
                       <div>
                         <div className="flex justify-between items-center">
                           <p className="font-semibold">Proof ({proof.proof.length} nodes):</p>
-                          <button
-                            className="btn btn-ghost btn-sm"
+                          <Button
+                            variant="ghost"
+                            size="sm"
                             onClick={() => copyToClipboard(JSON.stringify(proof.proof))}
                           >
                             <Copy className="w-4 h-4" />
-                          </button>
+                          </Button>
                         </div>
                         <div className="bg-base-300 p-2 rounded-lg mt-2">
                           <pre className="text-xs overflow-auto max-h-40">
@@ -289,12 +299,13 @@ const GetAssetProofBatchComponent = () => {
                             <p className="font-semibold">Tree ID:</p>
                             <p className="text-sm break-all">{proof.tree_id}</p>
                           </div>
-                          <button
-                            className="btn btn-ghost btn-sm"
+                          <Button
+                            variant="ghost"
+                            size="sm"
                             onClick={() => copyToClipboard(proof.tree_id)}
                           >
                             <Copy className="w-4 h-4" />
-                          </button>
+                          </Button>
                         </div>
                       </div>
 
@@ -303,16 +314,17 @@ const GetAssetProofBatchComponent = () => {
                           <p className="font-semibold">Leaf:</p>
                           <p className="text-sm break-all">{proof.leaf}</p>
                         </div>
-                        <button
-                          className="btn btn-ghost btn-sm"
+                        <Button
+                          variant="ghost"
+                          size="sm"
                           onClick={() => copyToClipboard(proof.leaf)}
                         >
                           <Copy className="w-4 h-4" />
-                        </button>
+                        </Button>
                       </div>
                     </div>
                   </div>
-                </div>
+                </Card>
               ))}
             </div>
           </div>

@@ -3,6 +3,9 @@ import * as React from 'react'
 import { useWallet } from '@solana/wallet-adapter-react'
 import { X } from 'lucide-react'
 import { WalletReadyState } from '@solana/wallet-adapter-base'
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog'
+import { Button } from '@/components/ui/button'
+import { Badge } from '@/components/ui/badge'
 
 interface WalletModalProps {
   isOpen: boolean
@@ -12,63 +15,55 @@ interface WalletModalProps {
 export const WalletModal: React.FC<WalletModalProps> = ({ isOpen, onClose }) => {
   const { wallets, select } = useWallet()
 
-  if (!isOpen) return null
-
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-      <div className="bg-base-200 rounded-lg p-6 max-w-sm w-full mx-4">
-        <div className="flex justify-between items-center mb-6">
-          <h3 className="text-xl font-bold">Connect Wallet</h3>
-          <button
-            onClick={onClose}
-            className="btn btn-ghost btn-sm btn-square"
-          >
-            <X className="w-5 h-5" />
-          </button>
-        </div>
+    <Dialog open={isOpen} onOpenChange={onClose}>
+      <DialogContent className="sm:max-w-md">
+        <DialogHeader>
+          <DialogTitle>Connect Wallet</DialogTitle>
+        </DialogHeader>
 
         <div className="space-y-3">
           {wallets.map((wallet) => (
-            <button
+            <Button
               key={wallet.adapter.name}
+              variant="outline"
               onClick={() => {
                 select(wallet.adapter.name)
                 onClose()
               }}
               disabled={wallet.readyState === WalletReadyState.Unsupported}
-              className="wallet-btn w-full group"
+              className="w-full flex justify-between items-center p-3 hover:bg-accent"
             >
-              <div className="flex items-center justify-between w-full p-3">
-                <span className="flex items-center gap-3">
-                  {wallet.adapter.icon && (
-                    <img
-                      src={wallet.adapter.icon}
-                      alt={`${wallet.adapter.name} icon`}
-                      className="w-6 h-6"
-                    />
-                  )}
-                  <span className="font-semibold">{wallet.adapter.name}</span>
-                </span>
-                {wallet.readyState === WalletReadyState.Installed && (
-                  <span className="badge badge-success gap-1">Installed</span>
+              <div className="flex items-center gap-3">
+                {wallet.adapter.icon && (
+                  <img
+                    src={wallet.adapter.icon}
+                    alt={`${wallet.adapter.name} icon`}
+                    className="w-6 h-6"
+                  />
                 )}
+                <span className="font-semibold">{wallet.adapter.name}</span>
               </div>
-            </button>
+              {wallet.readyState === WalletReadyState.Installed && (
+                <Badge variant="default">Installed</Badge>
+              )}
+            </Button>
           ))}
         </div>
 
-        <div className="mt-6 text-sm text-base-content/60 text-center">
+        <div className="mt-6 text-sm text-muted-foreground text-center">
           <p>New to Solana wallets?</p>
-          <a
-            href="https://solana.com/ecosystem/explore?categories=wallet"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="link link-primary"
+          <Button
+            variant="link"
+            onClick={() => window.open('https://solana.com/ecosystem/explore?categories=wallet', '_blank')}
+            className="text-primary"
           >
             Learn More
-          </a>
+          </Button>
         </div>
-      </div>
-    </div>
+      </DialogContent>
+    </Dialog>
   )
 }
+
+export default WalletModal
